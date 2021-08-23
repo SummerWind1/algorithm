@@ -10,7 +10,28 @@ public class InsertSort {
 
     public static void main(String[] args) {
 
-        // 这个排序我忘记定义是什么了。。。
+        int [] array = new int[] {1, 8, 4, 3, 6, 7, 2, 5};
+
+        // 外层循环控制比较的轮数, 最后一个数不需要比较
+        for (int i = 0; i < array.length -1; i++) {
+
+            // 内层循环控制每轮的比较, 每一轮都要和已经排好序的数组最后一个元素进行比较，然后判断是否需要进行位置交换
+            for (int j = i+1; j > 0; j--) {
+                if (array[j] < array[j-1]) {
+                    // 需要进行位置互换, 如何保证有序区间添加新元素之后继续有序(for 循环将元素换到指定位置)
+                    int temp = array[j];
+                    array[j] = array[j-1];
+                    array[j-1] = temp;
+                } else {
+                    // 此轮结束
+                    break;
+                }
+            }
+        }
+        // 打印
+        for (int i1 : array) {
+            System.out.println(i1);
+        }
 
     }
 

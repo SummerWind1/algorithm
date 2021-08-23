@@ -12,12 +12,13 @@ package com.radish.sort.selectsort;
  *
  * @author fangp fangp@3vjia.com
  * @since 2021-08-20 15:21
+ *
+ * TODO 看看小灰书里是怎么实现的
+ *
  */
 public class SelectSort {
 
     public static void main(String[] args) {
-
-        // 这个排序我忘记定义是什么了。。。
 
         int [] array = new int[] {1, 8, 4, 3, 6, 7, 2, 5};
 
