@@ -29,4 +29,22 @@ public class RandomUtil {
         return ints;
     }
 
+    /**
+     * 获取指定程度的数组
+     * @param length
+     * @return
+     */
+    public static int[] getRandomArrayByLength(int length) {
+
+        ThreadLocalRandom current = ThreadLocalRandom.current();
+
+        Set<Integer> set = new HashSet<>(length);
+
+        for (int i = 0; i < length; i++) {
+            set.add(current.nextInt(0, length));
+        }
+        int[] ints = set.stream().mapToInt(Integer::intValue).toArray();
+        return ints;
+    }
+
 }
