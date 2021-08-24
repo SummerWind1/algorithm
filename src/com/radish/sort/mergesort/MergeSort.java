@@ -1,9 +1,5 @@
 package com.radish.sort.mergesort;
 
-import com.radish.sort.util.RandomUtil;
-
-import java.util.Arrays;
-
 /**
  * 归并排序
  *
@@ -19,9 +15,13 @@ public class MergeSort {
 
 //        int[] randomArrayByLength = RandomUtil.getRandomArrayByLength(20);
 
-        int [] array = new int[] {1, 8, 4, 3, 6, 7, 2, 5};
+//        int [] array = new int[] {1, 8, 4, 3, 6, 7, 2, 5};
+//        int [] array = new int[] {5, 8, 6, 3, 9, 2, 1, 7};
+        int [] array = new int[] {5, 8, 6, 3};
 
-        sort(array);
+//        mergeSort(array);
+
+        mergeSortByGray(array, 0, array.length - 1);
 
         for (int i1 : array) {
             System.out.println(i1);
@@ -30,66 +30,101 @@ public class MergeSort {
     }
 
     /**
-     * 两个数组进行合并
-     * @param left
-     * @param right
+     * 百度-知乎版本
+     * @param arr
+     * @param result
+     * @param start
+     * @param end
      */
-    public static int[] merge(int [] left, int [] right) {
-
-        // 创建一个新数组用于存放两个数组合并后的有序数据
-        int[] result = new int[left.length + right.length];
-
-        int i = 0;
-
-        // 两个数组的数据进行比较，取第一个数组中的第一个数据和第二个数组的第一个数据作比较 eg a [2,5], b [6,1]
-        // 2 < 6 ; 2 放入新数组result 的首位，同时a 数组修改为[5]
-        // 5 < 6 ; 5 放入新数组result 的第二位
-        while (left.length > 0 && right.length > 0) {
-            if (left[0] <= right[0]) {
-                result[i++] = left[0];
-                // 这里是复制出来一个新的数组放余下的数据
-                left = Arrays.copyOfRange(left, 1, left.length);
-            } else {
-                result[i++] = right[0];
-                right = Arrays.copyOfRange(right, 1, right.length);
-            }
+    private static void mergeSortRecursive(int[] arr, int[] result, int start, int end) {
+        if (start >= end) {
+            return;
         }
-
-        // 如上操作的情况下，这里不会走
-        while (left.length > 0) {
-            result[i++] = left[0];
-            left = Arrays.copyOfRange(left, 1, left.length);
+        int len = end - start, mid = (len >> 1) + start;
+        // 分割入参数组为两个子数组
+        int start1 = start, end1 = mid;
+        int start2 = mid + 1, end2 = end;
+        mergeSortRecursive(arr, result, start1, end1);
+        mergeSortRecursive(arr, result, start2, end2);
+        int k = start;
+        while (start1 <= end1 && start2 <= end2) {
+            result[k++] = arr[start1] < arr[start2] ? arr[start1++] : arr[start2++];
         }
-
-        // 如上情况，这两会将right 数组直接放到result 数组的最后两位
-        while (right.length > 0) {
-            result[i++] = right[0];
-            right = Arrays.copyOfRange(right, 1, right.length);
+        while (start1 <= end1) {
+            result[k++] = arr[start1++];
         }
-
-        return result;
+        while (start2 <= end2) {
+            result[k++] = arr[start2++];
+        }
+        for (k = start; k <= end; k++) {
+            arr[k] = result[k];
+        }
     }
 
     /**
-     * 数组，对数组进行排序
+     * 集合排序，入参只有一个数组
+     * @param arr
      */
-    public static int[] sort(int [] sourceArray) {
-
-        int[] arr = Arrays.copyOf(sourceArray, sourceArray.length);
-
-        if (arr.length < 2) {
-            return arr;
-        }
-        // 数组分开
-        int middle = (int) Math.floor(arr.length >> 1);
-
-        int[] left = Arrays.copyOfRange(arr, 0, middle);
-        int[] right = Arrays.copyOfRange(arr, middle, arr.length);
-
-        return merge(sort(left), sort(right));
-
+    public static void mergeSort(int[] arr) {
+        int len = arr.length;
+        int[] result = new int[len];
+        mergeSortRecursive(arr, result, 0, len - 1);
     }
 
+
+    /**
+     * 小灰书中的版本比较直观
+     */
+    public static void mergeSortByGray(int [] array, int start, int end) {
+
+        if (start < end) {
+            int middle = (end + start) / 2;
+            // 对数组进行递归拆分，直到数组的元素无法在进行细分
+            mergeSortByGray(array, start, middle);
+            // 同上，只有元素被拆成单个，才会走到下面这个方法
+            mergeSortByGray(array, middle+1, end);
+            // 将最小粒度的元素进行合并
+            merge(array, start, end, middle);
+        }
+    }
+
+    /**
+     * 核心逻辑
+     * @param array 原始待排序数组
+     * @param start
+     * @param end
+     * @param middle
+     */
+    private static void merge(int[] array, int start, int end, int middle) {
+
+        // 需要将元素元素进行合并,创建一个临时的数组
+        int [] tempArray = new int[end - start + 1];
+
+        int p1 = start, p2 = middle + 1, p = 0;
+
+        while ((p1 <= middle) && (p2 <= end)) {
+            if (array[p1] <= array[p2]) {
+                // 这里的操作是p++ 在java 中不会立即加一
+                tempArray[p++] = array[p1++];
+            } else {
+                tempArray[p++] = array[p2++];
+            }
+        }
+
+        while (p1 <= middle) {
+            tempArray[p++] = array[p1++];
+        }
+
+        while (p2 <= end) {
+            tempArray[p++] = array[p2++];
+        }
+
+        for (int i = 0; i < tempArray.length ; i++) {
+            array[i + start] = tempArray[i];
+        }
+
+
+    }
 
 
 }
