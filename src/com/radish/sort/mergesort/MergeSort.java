@@ -119,6 +119,7 @@ public class MergeSort {
             tempArray[p++] = array[p2++];
         }
 
+        // 替换元素在原数组中的位置
         for (int i = 0; i < tempArray.length ; i++) {
             array[i + start] = tempArray[i];
         }
